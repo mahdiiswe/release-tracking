@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: block; 
+}
+
+#root {
+  width: 100%;
+}
+
+.table {
+  margin-left: -50px;
+}
