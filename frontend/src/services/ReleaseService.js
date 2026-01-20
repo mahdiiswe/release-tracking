@@ -14,3 +14,13 @@ export const updateRelease = (releaseId, release) => axios.put(RELEASE_API_BASE_
 
 export const delRelease = (releaseId) => axios.delete(RELEASE_API_BASE_URL + '/' + releaseId);
 
+export const uploadExcelFile = (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return axios.post("http://localhost:8081/upload_release_excel", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+

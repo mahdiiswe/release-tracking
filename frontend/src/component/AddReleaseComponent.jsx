@@ -335,466 +335,647 @@ const AddReleaseComponent = () => {
 
   function pageTitle() {
     if (id) {
-      return <h2 className="text-center mt-3">Update Release</h2>;
+      return (
+        <h3 style={{ color: "#764ba2", fontWeight: "600" }}>
+          📝 Update Release
+        </h3>
+      );
     } else {
-      return <h2 className="text-center mt-3">Add New Release</h2>;
+      return (
+        <h3 style={{ color: "#764ba2", fontWeight: "600" }}>
+          ➕ Add New Release
+        </h3>
+      );
     }
   }
 
   return (
-    <div className="container">
-      <br />
-      <br />
-
-      <div className="row">
-        <div className="card col-md-12">
+    <div className="container mt-4 mb-5">
+      <div
+        className="card shadow-lg"
+        style={{ borderRadius: "12px", border: "none", marginBottom: "2rem" }}
+      >
+        <div
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+            borderRadius: "12px 12px 0 0",
+            padding: "2rem",
+            textAlign: "center",
+          }}
+        >
           {pageTitle()}
+          <p
+            style={{
+              margin: "0.5rem 0 0 0",
+              opacity: 0.9,
+              fontSize: "0.95rem",
+            }}
+          >
+            Fill in the form below to {id ? "update" : "create"} a new release
+          </p>
+        </div>
 
-          <div className="card-body">
-            <form>
-              {/* Row 1 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">SL:</label>
-                  <input
-                    type="number"
-                    placeholder="Serial Number"
-                    name="sl"
-                    value={sl ?? ""}
-                    className={`form-control ${errors.sl ? "is-invalid" : ""}`}
-                    onChange={(e) =>
-                      setSl(
-                        e.target.value === "" ? null : Number(e.target.value)
-                      )
-                    }
-                  />
-                  {errors.sl && (
-                    <div className="invalid-feedback">{errors.sl}</div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release NUMBER:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., REL-002"
-                    name="releaseNumber"
-                    value={release_Number}
-                    className={`form-control ${
-                      errors.release_Number ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseNumber(e.target.value)}
-                  />
-                  {errors.release_Number && (
-                    <div className="invalid-feedback">
-                      {errors.release_Number}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release Date:</label>
-                  <input
-                    type="date"
-                    name="releaseDate"
-                    value={release_Date || ""}
-                    className={`form-control ${
-                      errors.release_Date ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseDate(e.target.value)}
-                  />
-                  {errors.release_Date && (
-                    <div className="invalid-feedback">
-                      {errors.release_Date}
-                    </div>
-                  )}
-                </div>
+        <div className="card-body p-4">
+          <form>
+            {/* Row 1 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>SL:</b>
+                </label>
+                <input
+                  type="number"
+                  placeholder="Serial Number"
+                  name="sl"
+                  value={sl ?? ""}
+                  className={`form-control ${errors.sl ? "is-invalid" : ""}`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) =>
+                    setSl(e.target.value === "" ? null : Number(e.target.value))
+                  }
+                />
+                {errors.sl && (
+                  <div className="invalid-feedback d-block">{errors.sl}</div>
+                )}
               </div>
 
-              {/* Row 2 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Project Name:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Project Name"
-                    name="projectName"
-                    value={project_Name}
-                    className={`form-control ${
-                      errors.project_Name ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setProjectName(e.target.value)}
-                  />
-                  {errors.project_Name && (
-                    <div className="invalid-feedback">
-                      {errors.project_Name}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Domain:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., HIKMAH"
-                    name="domain"
-                    value={domain}
-                    className={`form-control ${
-                      errors.domain ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setDomain(e.target.value)}
-                  />
-                  {errors.domain && (
-                    <div className="invalid-feedback">{errors.domain}</div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release Title:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Release Title Here"
-                    name="releaseTitle"
-                    value={release_Title}
-                    className={`form-control ${
-                      errors.release_Title ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseTitle(e.target.value)}
-                  />
-                  {errors.release_Title && (
-                    <div className="invalid-feedback">
-                      {errors.release_Title}
-                    </div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release NUMBER:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., REL-002"
+                  name="releaseNumber"
+                  value={release_Number}
+                  className={`form-control ${
+                    errors.release_Number ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseNumber(e.target.value)}
+                />
+                {errors.release_Number && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Number}
+                  </div>
+                )}
               </div>
 
-              {/* Row 3 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Delivery Type:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Delivery Type"
-                    name="deliveryType"
-                    value={delivery_Type}
-                    className={`form-control ${
-                      errors.delivery_Type ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setDeliveryType(e.target.value)}
-                  />
-                  {errors.delivery_Type && (
-                    <div className="invalid-feedback">
-                      {errors.delivery_Type}
-                    </div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release Date:</b>
+                </label>
+                <input
+                  type="date"
+                  name="releaseDate"
+                  value={release_Date || ""}
+                  className={`form-control ${
+                    errors.release_Date ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseDate(e.target.value)}
+                />
+                {errors.release_Date && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Date}
+                  </div>
+                )}
+              </div>
+            </div>
 
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release Letter Link:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Release Letter Link"
-                    name="releaseLetterLink"
-                    value={release_Letter_Link}
-                    className={`form-control ${
-                      errors.release_Letter_Link ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseLetterLink(e.target.value)}
-                  />
-                  {errors.release_Letter_Link && (
-                    <div className="invalid-feedback">
-                      {errors.release_Letter_Link}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Version No:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., 1.0.0"
-                    name="versionNo"
-                    value={version_No}
-                    className={`form-control ${
-                      errors.version_No ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setVersionNo(e.target.value)}
-                  />
-                  {errors.version_No && (
-                    <div className="invalid-feedback">{errors.version_No}</div>
-                  )}
-                </div>
+            {/* Row 2 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Project Name:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Project Name"
+                  name="projectName"
+                  value={project_Name}
+                  className={`form-control ${
+                    errors.project_Name ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setProjectName(e.target.value)}
+                />
+                {errors.project_Name && (
+                  <div className="invalid-feedback d-block">
+                    {errors.project_Name}
+                  </div>
+                )}
               </div>
 
-              {/* Row 4 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release Status:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Delivered"
-                    name="releaseStatus"
-                    value={release_Status}
-                    className={`form-control ${
-                      errors.release_Status ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseStatus(e.target.value)}
-                  />
-                  {errors.release_Status && (
-                    <div className="invalid-feedback">
-                      {errors.release_Status}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Assigned Team Members:</label>
-                  <input
-                    type="text"
-                    placeholder="Assigned Team Members"
-                    name="assignedTeamMembers"
-                    value={assigned_Team_Members}
-                    className={`form-control ${
-                      errors.assigned_Team_Members ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setAssignedTeamMembers(e.target.value)}
-                  />
-                  {errors.assigned_Team_Members && (
-                    <div className="invalid-feedback">
-                      {errors.assigned_Team_Members}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Client Name:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Client Name"
-                    name="clientName"
-                    value={client_Name}
-                    className={`form-control ${
-                      errors.client_Name ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setClientName(e.target.value)}
-                  />
-                  {errors.client_Name && (
-                    <div className="invalid-feedback">{errors.client_Name}</div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Domain:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., HIKMAH"
+                  name="domain"
+                  value={domain}
+                  className={`form-control ${
+                    errors.domain ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setDomain(e.target.value)}
+                />
+                {errors.domain && (
+                  <div className="invalid-feedback d-block">
+                    {errors.domain}
+                  </div>
+                )}
               </div>
 
-              {/* Row 5 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Client Stakeholder:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Client Stakeholder"
-                    name="clientStakeholder"
-                    value={client_Steckholder}
-                    className={`form-control ${
-                      errors.client_Steckholder ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setClientStakeholder(e.target.value)}
-                  />
-                  {errors.client_Steckholder && (
-                    <div className="invalid-feedback">
-                      {errors.client_Steckholder}
-                    </div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release Title:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Release Title Here"
+                  name="releaseTitle"
+                  value={release_Title}
+                  className={`form-control ${
+                    errors.release_Title ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseTitle(e.target.value)}
+                />
+                {errors.release_Title && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Title}
+                  </div>
+                )}
+              </div>
+            </div>
 
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release Type:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Major"
-                    name="releaseType"
-                    value={release_Type}
-                    className={`form-control ${
-                      errors.release_Type ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseType(e.target.value)}
-                  />
-                  {errors.release_Type && (
-                    <div className="invalid-feedback">
-                      {errors.release_Type}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Release For:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Internal Use"
-                    name="releaseFor"
-                    value={release_For}
-                    className={`form-control ${
-                      errors.release_For ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setReleaseFor(e.target.value)}
-                  />
-                  {errors.release_For && (
-                    <div className="invalid-feedback">{errors.release_For}</div>
-                  )}
-                </div>
+            {/* Row 3 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Delivery Type:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Delivery Type"
+                  name="deliveryType"
+                  value={delivery_Type}
+                  className={`form-control ${
+                    errors.delivery_Type ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setDeliveryType(e.target.value)}
+                />
+                {errors.delivery_Type && (
+                  <div className="invalid-feedback d-block">
+                    {errors.delivery_Type}
+                  </div>
+                )}
               </div>
 
-              {/* Row 6 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Testing Status:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., In Progress"
-                    name="testingStatus"
-                    value={testing_Status}
-                    className={`form-control ${
-                      errors.testing_Status ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setTestingStatus(e.target.value)}
-                  />
-                  {errors.testing_Status && (
-                    <div className="invalid-feedback">
-                      {errors.testing_Status}
-                    </div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Azure ID:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Azure ID"
-                    name="azureId"
-                    value={azure_Id}
-                    className={`form-control ${
-                      errors.azure_Id ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setAzureId(e.target.value)}
-                  />
-                  {errors.azure_Id && (
-                    <div className="invalid-feedback">{errors.azure_Id}</div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Jira ID:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Jira ID"
-                    name="jiraId"
-                    value={jira_Id}
-                    className={`form-control ${
-                      errors.jira_Id ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setJiraId(e.target.value)}
-                  />
-                  {errors.jira_Id && (
-                    <div className="invalid-feedback">{errors.jira_Id}</div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release Letter Link:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Release Letter Link"
+                  name="releaseLetterLink"
+                  value={release_Letter_Link}
+                  className={`form-control ${
+                    errors.release_Letter_Link ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseLetterLink(e.target.value)}
+                />
+                {errors.release_Letter_Link && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Letter_Link}
+                  </div>
+                )}
               </div>
 
-              {/* Row 7 */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">CERD Maintain:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., CERD Maintain"
-                    name="cerdMaintain"
-                    value={cerd_Maintain}
-                    className={`form-control ${
-                      errors.cerd_Maintain ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setCerdMaintain(e.target.value)}
-                  />
-                  {errors.cerd_Maintain && (
-                    <div className="invalid-feedback">
-                      {errors.cerd_Maintain}
-                    </div>
-                  )}
-                </div>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Version No:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., 1.0.0"
+                  name="versionNo"
+                  value={version_No}
+                  className={`form-control ${
+                    errors.version_No ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setVersionNo(e.target.value)}
+                />
+                {errors.version_No && (
+                  <div className="invalid-feedback d-block">
+                    {errors.version_No}
+                  </div>
+                )}
+              </div>
+            </div>
 
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">CERD ID:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., CERD ID"
-                    name="cerdId"
-                    value={cerd_Id}
-                    className={`form-control ${
-                      errors.cerd_Id ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setCerdId(e.target.value)}
-                  />
-                  {errors.cerd_Id && (
-                    <div className="invalid-feedback">{errors.cerd_Id}</div>
-                  )}
-                </div>
-
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Compliance Score:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Compliance Score"
-                    name="complianceScore"
-                    value={compliance_Score}
-                    className={`form-control ${
-                      errors.compliance_Score ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setComplianceScore(e.target.value)}
-                  />
-                  {errors.compliance_Score && (
-                    <div className="invalid-feedback">
-                      {errors.compliance_Score}
-                    </div>
-                  )}
-                </div>
+            {/* Row 4 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release Status:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Delivered"
+                  name="releaseStatus"
+                  value={release_Status}
+                  className={`form-control ${
+                    errors.release_Status ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseStatus(e.target.value)}
+                />
+                {errors.release_Status && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Status}
+                  </div>
+                )}
               </div>
 
-              {/* Row 8 (last row has 1 field; keep empty cols to maintain 3-column layout) */}
-              <div className="row">
-                <div className="col-md-4 mb-2">
-                  <label className="form-label">Remarks:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Remarks"
-                    name="remarks"
-                    value={remarks}
-                    className={`form-control ${
-                      errors.remarks ? "is-invalid" : ""
-                    }`}
-                    onChange={(e) => setRemarks(e.target.value)}
-                  />
-                  {errors.remarks && (
-                    <div className="invalid-feedback">{errors.remarks}</div>
-                  )}
-                </div>
-                <div className="col-md-4 mb-2" />
-                <div className="col-md-4 mb-2" />
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Assigned Team Members:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Assigned Team Members"
+                  name="assignedTeamMembers"
+                  value={assigned_Team_Members}
+                  className={`form-control ${
+                    errors.assigned_Team_Members ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setAssignedTeamMembers(e.target.value)}
+                />
+                {errors.assigned_Team_Members && (
+                  <div className="invalid-feedback d-block">
+                    {errors.assigned_Team_Members}
+                  </div>
+                )}
               </div>
 
-              <button
-                className="btn btn-success"
-                type="submit"
-                onClick={saveOrUpdateRelease}
-              >
-                Submit
-              </button>
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Client Name:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Client Name"
+                  name="clientName"
+                  value={client_Name}
+                  className={`form-control ${
+                    errors.client_Name ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+                {errors.client_Name && (
+                  <div className="invalid-feedback d-block">
+                    {errors.client_Name}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Row 5 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Client Stakeholder:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Client Stakeholder"
+                  name="clientStakeholder"
+                  value={client_Steckholder}
+                  className={`form-control ${
+                    errors.client_Steckholder ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setClientStakeholder(e.target.value)}
+                />
+                {errors.client_Steckholder && (
+                  <div className="invalid-feedback d-block">
+                    {errors.client_Steckholder}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release Type:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Major"
+                  name="releaseType"
+                  value={release_Type}
+                  className={`form-control ${
+                    errors.release_Type ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseType(e.target.value)}
+                />
+                {errors.release_Type && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_Type}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Release For:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Internal Use"
+                  name="releaseFor"
+                  value={release_For}
+                  className={`form-control ${
+                    errors.release_For ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setReleaseFor(e.target.value)}
+                />
+                {errors.release_For && (
+                  <div className="invalid-feedback d-block">
+                    {errors.release_For}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Row 6 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Testing Status:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., In Progress"
+                  name="testingStatus"
+                  value={testing_Status}
+                  className={`form-control ${
+                    errors.testing_Status ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setTestingStatus(e.target.value)}
+                />
+                {errors.testing_Status && (
+                  <div className="invalid-feedback d-block">
+                    {errors.testing_Status}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Azure ID:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Azure ID"
+                  name="azureId"
+                  value={azure_Id}
+                  className={`form-control ${
+                    errors.azure_Id ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setAzureId(e.target.value)}
+                />
+                {errors.azure_Id && (
+                  <div className="invalid-feedback d-block">
+                    {errors.azure_Id}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Jira ID:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Jira ID"
+                  name="jiraId"
+                  value={jira_Id}
+                  className={`form-control ${
+                    errors.jira_Id ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setJiraId(e.target.value)}
+                />
+                {errors.jira_Id && (
+                  <div className="invalid-feedback d-block">
+                    {errors.jira_Id}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Row 7 */}
+            <div className="row g-3 mb-3">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>CERD Maintain:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., CERD Maintain"
+                  name="cerdMaintain"
+                  value={cerd_Maintain}
+                  className={`form-control ${
+                    errors.cerd_Maintain ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setCerdMaintain(e.target.value)}
+                />
+                {errors.cerd_Maintain && (
+                  <div className="invalid-feedback d-block">
+                    {errors.cerd_Maintain}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>CERD ID:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., CERD ID"
+                  name="cerdId"
+                  value={cerd_Id}
+                  className={`form-control ${
+                    errors.cerd_Id ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setCerdId(e.target.value)}
+                />
+                {errors.cerd_Id && (
+                  <div className="invalid-feedback d-block">
+                    {errors.cerd_Id}
+                  </div>
+                )}
+              </div>
+
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Compliance Score:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Compliance Score"
+                  name="complianceScore"
+                  value={compliance_Score}
+                  className={`form-control ${
+                    errors.compliance_Score ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setComplianceScore(e.target.value)}
+                />
+                {errors.compliance_Score && (
+                  <div className="invalid-feedback d-block">
+                    {errors.compliance_Score}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Row 8 */}
+            <div className="row g-3 mb-4">
+              <div className="col-md-4">
+                <label
+                  className="form-label fw-600"
+                  style={{ color: "#495057", fontSize: "0.9rem" }}
+                >
+                  <b>Remarks:</b>
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., Remarks"
+                  name="remarks"
+                  value={remarks}
+                  className={`form-control ${
+                    errors.remarks ? "is-invalid" : ""
+                  }`}
+                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  onChange={(e) => setRemarks(e.target.value)}
+                />
+                {errors.remarks && (
+                  <div className="invalid-feedback d-block">
+                    {errors.remarks}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="d-flex gap-2 justify-content-between border-top pt-3">
               <button
                 type="button"
-                className="btn btn-secondary ms-2"
+                className="btn btn-outline-secondary"
                 onClick={() => navigator("/")}
+                style={{ borderRadius: "6px", minWidth: "120px" }}
               >
-                Back
+                ← Back
               </button>
-            </form>
-          </div>
+              <button
+                className="btn text-white"
+                type="submit"
+                onClick={saveOrUpdateRelease}
+                style={{
+                  borderRadius: "6px",
+                  background:
+                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  border: "none",
+                  minWidth: "120px",
+                  fontWeight: "600",
+                }}
+              >
+                {id ? "💾 Update" : "✔️ Submit"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

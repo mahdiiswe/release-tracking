@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { delRelease, getReleases } from "../services/ReleaseService";
+import {
+  delRelease,
+  getReleases,
+  uploadExcelFile,
+} from "../services/ReleaseService";
 import { useNavigate } from "react-router-dom";
 
 const ListReleaseComponent = () => {
@@ -7,7 +11,12 @@ const ListReleaseComponent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [uploadError, setUploadError] = useState("");
   const navigator = useNavigate();
+  const fileInputRef = React.useRef(null);
 
   function formatDateDisplay(value) {
     if (!value) return "";
@@ -70,6 +79,63 @@ const ListReleaseComponent = () => {
     }
   }
 
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      setUploadFile(file);
+      setUploadMessage("");
+      setUploadError("");
+    }
+  }
+
+  function handleUploadClick() {
+    if (!uploadFile) {
+      setUploadError("Please select an Excel file to upload");
+      return;
+    }
+
+    setUploading(true);
+    setUploadMessage("");
+    setUploadError("");
+
+    uploadExcelFile(uploadFile)
+      .then((response) => {
+        setUploadMessage(
+          "Excel file uploaded successfully! Data has been inserted.",
+        );
+        setUploadFile(null);
+        setUploadError("");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        // Refresh the releases list
+        setTimeout(() => {
+          getAllReleases();
+          setUploadMessage("");
+        }, 1500);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+        setUploadError(
+          error.response?.data?.message ||
+            error.message ||
+            "Error uploading file. Please check the file format and try again.",
+        );
+      })
+      .finally(() => {
+        setUploading(false);
+      });
+  }
+
+  function handleCancelUpload() {
+    setUploadFile(null);
+    setUploadMessage("");
+    setUploadError("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
   return (
     <div className="container mt-4">
       <div
@@ -90,6 +156,78 @@ const ListReleaseComponent = () => {
           </button>
         </div>
         <div className="card-body">
+          {/* Excel Upload Section */}
+          <div
+            className="alert alert-info p-3 mb-4"
+            style={{ borderRadius: 6 }}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="flex-grow-1">
+                <h6 className="mb-2">Bulk Upload Releases</h6>
+                <div className="d-flex align-items-center gap-3">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    accept=".xlsx,.xls,.csv"
+                    className="form-control"
+                    style={{ width: "300px" }}
+                    disabled={uploading}
+                  />
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={handleUploadClick}
+                    disabled={uploading || !uploadFile}
+                    style={{ minWidth: "100px" }}
+                  >
+                    {uploading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Uploading...
+                      </>
+                    ) : (
+                      "Upload"
+                    )}
+                  </button>
+                  {uploadFile && (
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleCancelUpload}
+                      disabled={uploading}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+                {uploadFile && (
+                  <small className="text-muted d-block mt-2">
+                    Selected: {uploadFile.name}
+                  </small>
+                )}
+              </div>
+            </div>
+
+            {uploadMessage && (
+              <div
+                className="alert alert-success mt-3 mb-0"
+                style={{ fontSize: "0.9rem" }}
+              >
+                ✓ {uploadMessage}
+              </div>
+            )}
+            {uploadError && (
+              <div
+                className="alert alert-danger mt-3 mb-0"
+                style={{ fontSize: "0.9rem" }}
+              >
+                ✗ {uploadError}
+              </div>
+            )}
+          </div>
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center gap-3">
               <div>
@@ -320,13 +458,13 @@ const ListReleaseComponent = () => {
                           >
                             {i}
                           </button>
-                        </li>
+                        </li>,
                       );
                     } else if (i === currentPage - 3 || i === currentPage + 3) {
                       pages.push(
                         <li key={i} className="page-item disabled">
                           <span className="page-link">...</span>
-                        </li>
+                        </li>,
                       );
                     }
                   }
@@ -344,7 +482,7 @@ const ListReleaseComponent = () => {
                     className="page-link"
                     onClick={() =>
                       setCurrentPage((p) =>
-                        Math.min(Math.ceil(releases.length / pageSize), p + 1)
+                        Math.min(Math.ceil(releases.length / pageSize), p + 1),
                       )
                     }
                   >
