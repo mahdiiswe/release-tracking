@@ -6,6 +6,7 @@ import com.example.ReleaseTracking.service.ReleaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -56,6 +57,17 @@ public class ReleaseController {
 
         Release_Tracking updated = releaseRepo.save(existing);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/upload_release_excel")
+    public ResponseEntity<String> uploadReleaseExcel(@RequestParam("file")MultipartFile file){
+
+        try{
+            releaseService.saveFromExcel(file);
+            return ResponseEntity.ok("Excel Uploaded Successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

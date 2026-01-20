@@ -40,7 +40,6 @@ const ListReleaseComponent = () => {
     getAllReleases();
   }, []);
 
-  // এই ফাংশনটি আপনার কোডে মিসিং ছিল
   function getAllReleases() {
     getReleases()
       .then((response) => {
