@@ -9,6 +9,7 @@ import FooterComponent from "./component/FooterComponent";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AddReleaseComponent from "./component/AddReleaseComponent";
 import ReleaseDetailsComponent from "./component/ReleaseDetailsComponent";
+import ReportComponent from "./component/ReportComponent";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ListReleaseComponent />} />
           <Route path="/releases" element={<ListReleaseComponent />} />
+          <Route path="/report" element={<ReportComponent />} />
           <Route path="/add-release" element={<AddReleaseComponent />} />
           <Route path="/edit-release/:id" element={<AddReleaseComponent />} />
           <Route

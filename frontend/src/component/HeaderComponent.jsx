@@ -77,6 +77,19 @@ const HeaderComponent = () => {
                   ➕ Add Release
                 </a>
               </li>
+              <li className="nav-item">
+                <a
+                  className="nav-link"
+                  onClick={() => navigate("/report")}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: "500",
+                  }}
+                >
+                  📊 Report & Filter
+                </a>
+              </li>
             </ul>
           </div>
         </div>

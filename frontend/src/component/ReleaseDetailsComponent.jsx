@@ -95,14 +95,49 @@ const ReleaseDetailsComponent = () => {
           </button>
         </div>
 
-        <div className="card-body p-3">
+        <div className="card-body p-4">
+          {/* Release Title Section */}
+          <div
+            className="alert alert-light border-left"
+            style={{
+              borderLeft: "4px solid #667eea",
+              marginBottom: "2rem",
+              padding: "1.5rem",
+              borderRadius: "6px",
+            }}
+          >
+            <h5
+              style={{
+                color: "#667eea",
+                marginBottom: "0.5rem",
+                fontWeight: "600",
+              }}
+            >
+              📌 Release Title
+            </h5>
+            <h3
+              style={{
+                margin: 0,
+                color: "#212529",
+                fontWeight: "700",
+                lineHeight: "1.5",
+              }}
+            >
+              {release.release_Title}
+            </h3>
+          </div>
+
+          {/* Details Grid */}
           <div className="row g-3">
             {Object.keys(release).map((key) => {
+              // Skip release_Title as it's shown in the special section
+              if (key === "release_Title") return null;
+
               const fieldName = formatFieldName(key);
               const fieldValue = getValue(key, release[key]);
 
               return (
-                <div key={key} className="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div key={key} className="col-12 col-sm-6 col-md-4 col-lg-4">
                   <div
                     className="form-group"
                     style={{
