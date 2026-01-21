@@ -27,6 +27,26 @@ const ReportComponent = () => {
   const [types, setTypes] = useState([]);
   const [teams, setTeams] = useState([]);
 
+  // Column management
+  const [availableColumns, setAvailableColumns] = useState([]);
+  const [displayColumns, setDisplayColumns] = useState([]);
+  const [exportColumns, setExportColumns] = useState([]);
+  const [showColumnModal, setShowColumnModal] = useState(false);
+  const [dynamicFilters, setDynamicFilters] = useState({});
+  const [dynamicFilterValues, setDynamicFilterValues] = useState({});
+  const [showAdditionalFilters, setShowAdditionalFilters] = useState(false);
+  const [selectedDynamicFilters, setSelectedDynamicFilters] = useState([]);
+
+  // Default display columns (main table)
+  const defaultDisplayColumns = [
+    "sl",
+    "release_Id",
+    "release_Date",
+    "domain",
+    "release_Title",
+    "release_Status",
+  ];
+
   // Load all releases
   useEffect(() => {
     fetchAllReleases();
@@ -40,24 +60,90 @@ const ReportComponent = () => {
         setReleases(data);
         setFilteredReleases(data);
 
-        // Extract unique values for filters
-        const uniqueDomains = [...new Set(data.map((r) => r.domain))].filter(
-          Boolean,
-        );
+        // Extract all unique column names from the data
+        const allColumns = new Set();
+        data.forEach((record) => {
+          Object.keys(record).forEach((key) => allColumns.add(key));
+        });
+        const columnList = Array.from(allColumns).sort();
+        setAvailableColumns(columnList);
+        setDisplayColumns(defaultDisplayColumns);
+        setExportColumns(columnList);
+
+        // Extract unique values for static filters (Domain, Status, Type, Team) - case insensitive with trim
+        const uniqueDomains = [
+          ...new Set(
+            data
+              .map((r) =>
+                String(r.domain || "")
+                  .toLowerCase()
+                  .trim(),
+              )
+              .filter((v) => v.length > 0),
+          ),
+        ].sort();
         const uniqueStatuses = [
-          ...new Set(data.map((r) => r.release_Status)),
-        ].filter(Boolean);
+          ...new Set(
+            data
+              .map((r) =>
+                String(r.release_Status || "")
+                  .toLowerCase()
+                  .trim(),
+              )
+              .filter((v) => v.length > 0),
+          ),
+        ].sort();
         const uniqueTypes = [
-          ...new Set(data.map((r) => r.release_Type)),
-        ].filter(Boolean);
+          ...new Set(
+            data
+              .map((r) =>
+                String(r.release_Type || "")
+                  .toLowerCase()
+                  .trim(),
+              )
+              .filter((v) => v.length > 0),
+          ),
+        ].sort();
         const uniqueTeams = [
-          ...new Set(data.map((r) => r.assigned_Team_Members)),
-        ].filter(Boolean);
+          ...new Set(
+            data
+              .map((r) =>
+                String(r.assigned_Team_Members || "")
+                  .toLowerCase()
+                  .trim(),
+              )
+              .filter((v) => v.length > 0),
+          ),
+        ].sort();
 
         setDomains(uniqueDomains);
         setStatuses(uniqueStatuses);
         setTypes(uniqueTypes);
         setTeams(uniqueTeams);
+
+        // Extract unique values for dynamic filters - case insensitive with trim
+        const filterObj = {};
+        columnList.forEach((col) => {
+          const uniqueValues = [
+            ...new Set(
+              data
+                .map((r) =>
+                  String(r[col] || "")
+                    .toLowerCase()
+                    .trim(),
+                )
+                .filter((v) => v.length > 0),
+            ),
+          ]
+            .sort()
+            .slice(0, 50); // Limit to 50 unique values
+          if (uniqueValues.length > 1 && uniqueValues.length <= 50) {
+            filterObj[col] = uniqueValues;
+          }
+        });
+        setDynamicFilters(filterObj);
+        // Initialize selectedDynamicFilters with all available dynamic filters
+        setSelectedDynamicFilters(Object.keys(filterObj));
       })
       .catch((error) => {
         console.error("Error fetching releases:", error);
@@ -78,32 +164,60 @@ const ReportComponent = () => {
     startDate,
     endDate,
     searchTerm,
+    dynamicFilterValues,
   ]);
 
   function applyFilters() {
     let filtered = releases;
 
-    // Domain filter
+    // Domain filter - case insensitive LIKE
     if (selectedDomain) {
-      filtered = filtered.filter((r) => r.domain === selectedDomain);
-    }
-
-    // Status filter
-    if (selectedStatus) {
-      filtered = filtered.filter((r) => r.release_Status === selectedStatus);
-    }
-
-    // Type filter
-    if (selectedType) {
-      filtered = filtered.filter((r) => r.release_Type === selectedType);
-    }
-
-    // Team filter
-    if (selectedTeam) {
-      filtered = filtered.filter(
-        (r) => r.assigned_Team_Members === selectedTeam,
+      filtered = filtered.filter((r) =>
+        String(r.domain || "")
+          .toLowerCase()
+          .includes(selectedDomain.toLowerCase()),
       );
     }
+
+    // Status filter - case insensitive LIKE
+    if (selectedStatus) {
+      filtered = filtered.filter((r) =>
+        String(r.release_Status || "")
+          .toLowerCase()
+          .includes(selectedStatus.toLowerCase()),
+      );
+    }
+
+    // Type filter - case insensitive LIKE
+    if (selectedType) {
+      filtered = filtered.filter((r) =>
+        String(r.release_Type || "")
+          .toLowerCase()
+          .includes(selectedType.toLowerCase()),
+      );
+    }
+
+    // Team filter - case insensitive LIKE
+    if (selectedTeam) {
+      filtered = filtered.filter((r) =>
+        String(r.assigned_Team_Members || "")
+          .toLowerCase()
+          .includes(selectedTeam.toLowerCase()),
+      );
+    }
+
+    // Dynamic filters - case insensitive LIKE with trim
+    Object.keys(dynamicFilterValues).forEach((colName) => {
+      const value = dynamicFilterValues[colName];
+      if (value) {
+        filtered = filtered.filter((r) =>
+          String(r[colName] || "")
+            .toLowerCase()
+            .trim()
+            .includes(value.toLowerCase().trim()),
+        );
+      }
+    });
 
     // Date range filter
     if (startDate) {
@@ -142,6 +256,60 @@ const ReportComponent = () => {
     setStartDate("");
     setEndDate("");
     setSearchTerm("");
+    setDynamicFilterValues({});
+  }
+
+  // Export filtered data to Excel
+  function exportToExcel() {
+    if (filteredReleases.length === 0) {
+      alert("No data to export. Please apply filters or ensure data exists.");
+      return;
+    }
+
+    // Use selected export columns
+    const headers = exportColumns.length > 0 ? exportColumns : availableColumns;
+
+    // Create rows with selected columns
+    const rows = filteredReleases.map((release) => {
+      return headers.map((key) => {
+        const value = release[key];
+        // Format dates if needed
+        if (
+          (/(date|Date)$/i.test(key) ||
+            /\d{4}-\d{2}-\d{2}/.test(String(value))) &&
+          value
+        ) {
+          return formatDateDisplay(value);
+        }
+        return value || "";
+      });
+    });
+
+    // Create CSV content
+    let csvContent = headers.join(",") + "\n";
+    rows.forEach((row) => {
+      csvContent +=
+        row
+          .map((cell) => {
+            // Escape quotes and wrap in quotes if contains comma
+            const cellStr = String(cell || "");
+            return cellStr.includes(",")
+              ? `"${cellStr.replace(/"/g, '""')}"`
+              : cellStr;
+          })
+          .join(",") + "\n";
+    });
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `releases_${new Date().getTime()}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 
   function formatDateDisplay(value) {
@@ -177,6 +345,8 @@ const ReportComponent = () => {
     selectedTeam,
     startDate,
     endDate,
+    searchTerm,
+    ...Object.values(dynamicFilterValues),
   ].filter(Boolean).length;
 
   return (
@@ -225,89 +395,6 @@ const ReportComponent = () => {
             />
           </div>
 
-          {/* Filters Section */}
-          <div className="row g-3 mb-4">
-            {/* Domain Filter */}
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label fw-600" style={{ color: "#495057" }}>
-                🏢 Domain:
-              </label>
-              <select
-                className="form-select"
-                value={selectedDomain}
-                onChange={(e) => setSelectedDomain(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
-              >
-                <option value="">All Domains</option>
-                {domains.map((domain) => (
-                  <option key={domain} value={domain}>
-                    {domain}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Status Filter */}
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label fw-600" style={{ color: "#495057" }}>
-                ✅ Status:
-              </label>
-              <select
-                className="form-select"
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
-              >
-                <option value="">All Statuses</option>
-                {statuses.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Type Filter */}
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label fw-600" style={{ color: "#495057" }}>
-                📦 Release Type:
-              </label>
-              <select
-                className="form-select"
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
-              >
-                <option value="">All Types</option>
-                {types.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Team Filter */}
-            <div className="col-md-6 col-lg-3">
-              <label className="form-label fw-600" style={{ color: "#495057" }}>
-                👥 Team Member:
-              </label>
-              <select
-                className="form-select"
-                value={selectedTeam}
-                onChange={(e) => setSelectedTeam(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
-              >
-                <option value="">All Teams</option>
-                {teams.map((team) => (
-                  <option key={team} value={team}>
-                    {team}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           {/* Date Range Section */}
           <div className="row g-3 mb-4">
             <div className="col-md-6">
@@ -315,11 +402,22 @@ const ReportComponent = () => {
                 📅 Start Date:
               </label>
               <input
+                ref={(ref) => {
+                  if (ref && !ref.dataset.clickHandlerAttached) {
+                    ref.addEventListener("click", () => ref.showPicker?.());
+                    ref.dataset.clickHandlerAttached = "true";
+                  }
+                }}
                 type="date"
                 className="form-control"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
+                onFocus={(e) => e.target.showPicker?.()}
+                style={{
+                  borderRadius: "6px",
+                  padding: "0.6rem",
+                  cursor: "pointer",
+                }}
               />
             </div>
 
@@ -328,17 +426,28 @@ const ReportComponent = () => {
                 📅 End Date:
               </label>
               <input
+                ref={(ref) => {
+                  if (ref && !ref.dataset.clickHandlerAttached) {
+                    ref.addEventListener("click", () => ref.showPicker?.());
+                    ref.dataset.clickHandlerAttached = "true";
+                  }
+                }}
                 type="date"
                 className="form-control"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                style={{ borderRadius: "6px", padding: "0.6rem" }}
+                onFocus={(e) => e.target.showPicker?.()}
+                style={{
+                  borderRadius: "6px",
+                  padding: "0.6rem",
+                  cursor: "pointer",
+                }}
               />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="d-flex gap-2 mb-4">
+          <div className="d-flex gap-2 mb-4 flex-wrap">
             <button
               className="btn text-white"
               onClick={resetFilters}
@@ -350,6 +459,30 @@ const ReportComponent = () => {
               }}
             >
               🔄 Reset Filters
+            </button>
+            <button
+              className="btn text-white"
+              onClick={exportToExcel}
+              style={{
+                background: "linear-gradient(135deg, #28a745 0%, #20c997 100%)",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "600",
+              }}
+            >
+              📥 Export to Excel
+            </button>
+            <button
+              className="btn text-white"
+              onClick={() => setShowColumnModal(true)}
+              style={{
+                background: "linear-gradient(135deg, #17a2b8 0%, #20c997 100%)",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "600",
+              }}
+            >
+              ⚙️ Configure Filters & Columns
             </button>
             <span
               className="badge bg-info"
@@ -364,6 +497,271 @@ const ReportComponent = () => {
                 : "No filters applied"}
             </span>
           </div>
+
+          {/* Dynamic Filters Section - Only show enabled filters */}
+          {selectedDynamicFilters.length > 0 && (
+            <div className="mb-4">
+              <h6
+                style={{
+                  color: "#667eea",
+                  fontWeight: "600",
+                  marginBottom: "1rem",
+                }}
+              >
+                🔽 Additional Filters ({selectedDynamicFilters.length})
+              </h6>
+              <div className="row g-3">
+                {selectedDynamicFilters.map((colName) => (
+                  <div key={colName} className="col-md-6 col-lg-3">
+                    <label
+                      className="form-label fw-600"
+                      style={{ color: "#495057" }}
+                    >
+                      {colName}:
+                    </label>
+                    <div className="input-group">
+                      <select
+                        className="form-select"
+                        value={dynamicFilterValues[colName] || ""}
+                        onChange={(e) => {
+                          setDynamicFilterValues({
+                            ...dynamicFilterValues,
+                            [colName]: e.target.value,
+                          });
+                        }}
+                        style={{
+                          borderRadius: "6px 0 0 6px",
+                          padding: "0.6rem",
+                        }}
+                      >
+                        <option value="">Select or type...</option>
+                        {dynamicFilters[colName] &&
+                          dynamicFilters[colName].map((val) => (
+                            <option key={val} value={val}>
+                              {val.toUpperCase()}
+                            </option>
+                          ))}
+                      </select>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Type value..."
+                        value={dynamicFilterValues[colName] || ""}
+                        onChange={(e) => {
+                          setDynamicFilterValues({
+                            ...dynamicFilterValues,
+                            [colName]: e.target.value,
+                          });
+                        }}
+                        style={{
+                          borderRadius: "0 6px 6px 0",
+                          padding: "0.6rem",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Column Configuration Modal */}
+          {showColumnModal && (
+            <div
+              className="modal d-block"
+              style={{ backgroundColor: "rgba(0,0,0,0.5)", display: "block" }}
+            >
+              <div
+                className="modal-dialog modal-lg"
+                style={{ marginTop: "3rem" }}
+              >
+                <div className="modal-content" style={{ borderRadius: "12px" }}>
+                  <div
+                    className="modal-header"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    <h5 className="modal-title">
+                      ⚙️ Filters & Columns Configuration
+                    </h5>
+                    <button
+                      className="btn-close btn-close-white"
+                      onClick={() => setShowColumnModal(false)}
+                    ></button>
+                  </div>
+                  <div
+                    className="modal-body"
+                    style={{ maxHeight: "75vh", overflowY: "auto" }}
+                  >
+                    {/* Dynamic Filters Configuration Section */}
+                    <h6
+                      className="mb-3"
+                      style={{ color: "#667eea", fontWeight: "700" }}
+                    >
+                      🔹 Enable/Disable Dynamic Filters
+                    </h6>
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "#666",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      Select which columns should appear as filters on the main
+                      page
+                    </p>
+                    <div className="d-flex gap-2 mb-3">
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={() =>
+                          setSelectedDynamicFilters(Object.keys(dynamicFilters))
+                        }
+                      >
+                        ✓ Enable All
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => setSelectedDynamicFilters([])}
+                      >
+                        ✗ Disable All
+                      </button>
+                    </div>
+                    <div
+                      className="row g-2"
+                      style={{
+                        maxHeight: "350px",
+                        overflowY: "auto",
+                        border: "1px solid #dee2e6",
+                        padding: "0.75rem",
+                        borderRadius: "6px",
+                        marginBottom: "2rem",
+                      }}
+                    >
+                      {Object.keys(dynamicFilters).map((col) => (
+                        <div key={col} className="col-md-6 col-lg-4">
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id={`filter-${col}`}
+                              checked={selectedDynamicFilters.includes(col)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedDynamicFilters([
+                                    ...selectedDynamicFilters,
+                                    col,
+                                  ]);
+                                } else {
+                                  setSelectedDynamicFilters(
+                                    selectedDynamicFilters.filter(
+                                      (c) => c !== col,
+                                    ),
+                                  );
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`filter-${col}`}
+                              style={{ fontSize: "0.9rem" }}
+                            >
+                              {col}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <hr style={{ margin: "2rem 0" }} />
+
+                    {/* Export Columns Section */}
+                    <h6
+                      className="mb-3"
+                      style={{ color: "#667eea", fontWeight: "700" }}
+                    >
+                      📥 Excel Export Columns
+                    </h6>
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "#666",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      Select which columns to include in Excel export
+                    </p>
+                    <div className="d-flex gap-2 mb-3">
+                      <button
+                        className="btn btn-sm btn-success"
+                        onClick={() => setExportColumns([...availableColumns])}
+                      >
+                        ✓ Select All
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => setExportColumns([])}
+                      >
+                        ✗ Deselect All
+                      </button>
+                    </div>
+                    <div
+                      className="row g-2"
+                      style={{
+                        maxHeight: "350px",
+                        overflowY: "auto",
+                        border: "1px solid #dee2e6",
+                        padding: "0.75rem",
+                        borderRadius: "6px",
+                      }}
+                    >
+                      {availableColumns.map((col) => (
+                        <div key={col} className="col-md-6 col-lg-4">
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id={`export-${col}`}
+                              checked={exportColumns.includes(col)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setExportColumns([...exportColumns, col]);
+                                } else {
+                                  setExportColumns(
+                                    exportColumns.filter((c) => c !== col),
+                                  );
+                                }
+                              }}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={`export-${col}`}
+                              style={{ fontSize: "0.9rem" }}
+                            >
+                              {col}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setShowColumnModal(false)}
+                    >
+                      Ok
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dynamic Filters Section - REMOVED, moved to modal */}
 
           {/* Active Filters Display */}
           {activeFilters > 0 && (
@@ -489,6 +887,30 @@ const ReportComponent = () => {
                     To: {endDate} ✕
                   </span>
                 )}
+                {Object.keys(dynamicFilterValues).map((colName) => {
+                  const value = dynamicFilterValues[colName];
+                  if (!value) return null;
+                  return (
+                    <span
+                      key={colName}
+                      className="badge"
+                      style={{
+                        background: "#6f42c1",
+                        color: "white",
+                        padding: "0.5rem 0.75rem",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        const newValues = { ...dynamicFilterValues };
+                        delete newValues[colName];
+                        setDynamicFilterValues(newValues);
+                      }}
+                    >
+                      {colName}: {value} ✕
+                    </span>
+                  );
+                })}
               </div>
             </div>
           )}
