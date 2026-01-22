@@ -4,14 +4,6 @@ import { useNavigate } from "react-router-dom";
 const HeaderComponent = () => {
   const navigate = useNavigate();
 
-  // মেনু আইটেমগুলোর জন্য কমন স্টাইল
-  const navLinkStyle = {
-    cursor: "pointer",
-    fontSize: "0.95rem",
-    fontWeight: "500",
-    transition: "all 0.3s ease",
-  };
-
   return (
     <header
       style={{
@@ -28,7 +20,6 @@ const HeaderComponent = () => {
         style={{ background: "transparent" }}
       >
         <div className="container-fluid">
-          {/* Logo / Brand */}
           <a
             className="navbar-brand"
             onClick={() => navigate("/")}
@@ -42,7 +33,7 @@ const HeaderComponent = () => {
               gap: "0.5rem",
             }}
           >
-            <span style={{ fontSize: "1.8rem" }}>🚀</span>
+            <span style={{ fontSize: "1.8rem" }}>📊</span>
             Release Tracking
           </a>
 
@@ -60,42 +51,41 @@ const HeaderComponent = () => {
 
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
-              {/* Dashboard Link - নতুন যুক্ত করা হয়েছে */}
               <li className="nav-item">
                 <a
                   className="nav-link"
-                  onClick={() => navigate("/dashboard")}
-                  style={navLinkStyle}
-                >
-                  📈 Dashboard
-                </a>
-              </li>
-
-              <li className="nav-item">
-                <a
-                  className="nav-link"
-                  onClick={() => navigate("/releases")}
-                  style={navLinkStyle}
+                  onClick={() => navigate("/")}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: "500",
+                  }}
                 >
                   📋 Releases
                 </a>
               </li>
-
               <li className="nav-item">
                 <a
                   className="nav-link"
                   onClick={() => navigate("/add-release")}
-                  style={navLinkStyle}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: "500",
+                  }}
                 >
                   ➕ Add Release
                 </a>
               </li>
-
               <li className="nav-item">
                 <a
                   className="nav-link"
                   onClick={() => navigate("/report")}
-                  style={navLinkStyle}
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: "500",
+                  }}
                 >
                   📊 Report & Filter
                 </a>
