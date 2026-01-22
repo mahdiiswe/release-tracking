@@ -42,7 +42,7 @@ const HeaderComponent = () => {
               gap: "0.5rem",
             }}
           >
-            <span style={{ fontSize: "1.8rem" }}>🚀</span>
+            <span style={{ fontSize: "1.8rem" }}>📊</span>
             Release Tracking
           </a>
 

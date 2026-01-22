@@ -540,17 +540,25 @@ const AddReleaseComponent = () => {
                 >
                   <b>Delivery Type:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Delivery Type"
+
+                <select
                   name="deliveryType"
                   value={delivery_Type}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.delivery_Type ? "is-invalid" : ""
                   }`}
-                  style={{ borderRadius: "6px", padding: "0.6rem" }}
+                  style={{
+                    borderRadius: "6px",
+                    padding: "0.6rem",
+                    borderColor: errors.delivery_Type ? "#dc3545" : "#ced4da",
+                  }}
                   onChange={(e) => setDeliveryType(e.target.value)}
-                />
+                >
+                  <option value="">Select Delivery Type</option>
+                  <option value="INTERNAL">INTERNAL</option>
+                  <option value="EXTERNAL">EXTERNAL</option>
+                </select>
+
                 {errors.delivery_Type && (
                   <div className="invalid-feedback d-block">
                     {errors.delivery_Type}
@@ -618,17 +626,20 @@ const AddReleaseComponent = () => {
                 >
                   <b>Release Status:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Delivered"
+                <select
                   name="releaseStatus"
                   value={release_Status}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.release_Status ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setReleaseStatus(e.target.value)}
-                />
+                >
+                  <option value="">Select Release Status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
                 {errors.release_Status && (
                   <div className="invalid-feedback d-block">
                     {errors.release_Status}
@@ -643,17 +654,20 @@ const AddReleaseComponent = () => {
                 >
                   <b>Assigned Team Members:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="Assigned Team Members"
+                <select
                   name="assignedTeamMembers"
                   value={assigned_Team_Members}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.assigned_Team_Members ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setAssignedTeamMembers(e.target.value)}
-                />
+                >
+                  <option value="">Select Assigned Team Members</option>
+                  <option value="Shakila">Shakila</option>
+                  <option value="Salahuddin">Salahuddin</option>
+                  <option value="Mahdi">Mahdi</option>
+                </select>
                 {errors.assigned_Team_Members && (
                   <div className="invalid-feedback d-block">
                     {errors.assigned_Team_Members}
@@ -668,17 +682,21 @@ const AddReleaseComponent = () => {
                 >
                   <b>Client Name:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Client Name"
+                <select
                   name="clientName"
                   value={client_Name}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.client_Name ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setClientName(e.target.value)}
-                />
+                >
+                  <option value="">Select Client Name</option>
+                  <option value="Bank Asia PLC">Bank Asia PLC</option>
+                  <option value="Standard Bank PLC">Standard Bank PLC</option>
+                  <option value="BCBL">BCBL</option>
+                  <option value="BDBL">BDBL</option>
+                </select>
                 {errors.client_Name && (
                   <div className="invalid-feedback d-block">
                     {errors.client_Name}
@@ -721,17 +739,21 @@ const AddReleaseComponent = () => {
                 >
                   <b>Release Type:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Major"
+                <select
                   name="releaseType"
                   value={release_Type}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.release_Type ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setReleaseType(e.target.value)}
-                />
+                >
+                  <option value="">Select Release Type</option>
+                  <option value="New Feature">New Feature</option>
+                  <option value="Enhancement">Enhancement</option>
+                  <option value="Modification">Modification</option>
+                  <option value="Bug Fix">Bug Fix</option>
+                </select>
                 {errors.release_Type && (
                   <div className="invalid-feedback d-block">
                     {errors.release_Type}
@@ -746,17 +768,20 @@ const AddReleaseComponent = () => {
                 >
                   <b>Release For:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Internal Use"
+                <select
                   name="releaseFor"
                   value={release_For}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.release_For ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setReleaseFor(e.target.value)}
-                />
+                >
+                  <option value="">Select Release For</option>
+                  <option value="Live">Live</option>
+                  <option value="UAT">UAT</option>
+                  <option value="Testing">Testing</option>
+                </select>
                 {errors.release_For && (
                   <div className="invalid-feedback d-block">
                     {errors.release_For}
@@ -774,17 +799,19 @@ const AddReleaseComponent = () => {
                 >
                   <b>Testing Status:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., In Progress"
+                <select
                   name="testingStatus"
                   value={testing_Status}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.testing_Status ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setTestingStatus(e.target.value)}
-                />
+                >
+                  <option value="">Select Testing Status</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
                 {errors.testing_Status && (
                   <div className="invalid-feedback d-block">
                     {errors.testing_Status}
@@ -852,17 +879,19 @@ const AddReleaseComponent = () => {
                 >
                   <b>CERD Maintain:</b>
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g., CERD Maintain"
+                <select
                   name="cerdMaintain"
                   value={cerd_Maintain}
-                  className={`form-control ${
+                  className={`form-select ${
                     errors.cerd_Maintain ? "is-invalid" : ""
                   }`}
                   style={{ borderRadius: "6px", padding: "0.6rem" }}
                   onChange={(e) => setCerdMaintain(e.target.value)}
-                />
+                >
+                  <option value="">Select CERD Maintain</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
                 {errors.cerd_Maintain && (
                   <div className="invalid-feedback d-block">
                     {errors.cerd_Maintain}
